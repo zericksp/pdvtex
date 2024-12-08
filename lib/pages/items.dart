@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -5,21 +7,26 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 const String _url = "https://www.tiven.com.br/crud/images/";
+// ignore: unused_element
 String _status = "";
 String _creationdate = "";
+String strUser = "";
+String nOrder = "";
+String nStore = "";
+String picked = "";
 
-Future setQty(http.Client client, String _sSku, String _sEan, String _sTitle,
-    String _sLoc, String _sQty) async {
+Future setQty(http.Client client, String sSku, String sEan, String sTitle,
+    String sLoc, String sQty) async {
   String strparam = 'https://www.tiven.com.br/picking/updqty.php/';
   strparam += '?usr=zerick'; //' + $strUser;
 
   var created = DateTime.now();
-  strparam += '&created=' + created.toString();
-  strparam += '&sku=' + _sSku;
-  strparam += '&ean=' + _sEan;
-  strparam += '&tit=' + _sTitle;
-  strparam += '&loc=' + _sLoc;
-  strparam += '&qty=' + _sQty;
+  strparam += '&created=$created';
+  strparam += '&sku=$sSku';
+  strparam += '&ean=$sEan';
+  strparam += '&tit=$sTitle';
+  strparam += '&loc=$sLoc';
+  strparam += '&qty=$sQty';
   strparam += '&status=picking';
 
   final response = await client.get(Uri.parse(strparam));
@@ -31,10 +38,10 @@ Future setQty(http.Client client, String _sSku, String _sEan, String _sTitle,
 Future setPicked(http.Client client, String $strUser, String $nOrder,
     String $nStore, String $picked) async {
   String strparam = 'https://www.tiven.com.br/picking/updpicked.php/';
-  strparam += '?usr=' + $strUser;
-  strparam += '&nOrder=' + $nOrder;
-  strparam += '&nStore=' + $nStore;
-  strparam += '&status=' + $picked;
+  strparam += '?usr=$strUser';
+  strparam += '&nOrder=$nOrder';
+  strparam += '&nStore=$nStore';
+  strparam += '&status=$picked';
 
   final response = await client.get(Uri.parse(strparam));
   print(response.body);
@@ -75,9 +82,9 @@ class Repo {
       required this.thumbnailUrl});
 
   factory Repo.fromJson(Map<String, dynamic> json) {
-    var strPath = FileSystemEntity.isFile(_url + json['sku'] + '.jpg') != null
-        ? _url + json['sku'] + '.jpg'
-        : _url + 'nopicture.jpg';
+    var strPath = FileSystemEntity.isFile('${_url + json['sku']}.jpg') != null
+        ? '${_url + json['sku']}.jpg'
+        : '${_url}nopicture.jpg';
 
     return Repo(
       sku: json['sku'] as String,
@@ -91,13 +98,13 @@ class Repo {
 }
 
 Future<List<NFe>> fetchNFe(
-    http.Client client, String $user, String $nOrder, String $strStore) async {
+    http.Client client, String user, String nOrder, String strStore) async {
   String strparam = 'https://www.tiven.com.br/picking/exped.php/';
-  strparam += '?user=' + $user;
-  strparam += '&nOrder=' + $nOrder;
+  strparam += '?user=$user';
+  strparam += '&nOrder=$nOrder';
   strparam += '&picked=false';
   strparam += '&status=6';
-  strparam += $strStore.length > 5 ? '&nStore=' + $strStore : '';
+  strparam += strStore.length > 5 ? '&nStore=$strStore' : '';
 
   final response = await client.get(Uri.parse(strparam));
   print(response.body);
@@ -115,10 +122,10 @@ Future<List<NFe>> parseNFe(String responseBody) async {
 //----------------------------------------------------------------------------------------------
 
 Future<List<NFe>> fetchInvoice(
-    http.Client client, String $user, String $nOrder) async {
+    http.Client client, String user, String nOrder) async {
   String strparam = 'https://www.tiven.com.br/picking/exped.php/';
-  strparam += '?user=' + $user;
-  strparam += '&nOrder=' + $nOrder;
+  strparam += '?user=$user';
+  strparam += '&nOrder=$nOrder';
   strparam += '&picked=false';
   strparam += '&status=6';
 
@@ -157,9 +164,9 @@ class NFe {
       required this.thumbnailUrl});
 
   factory NFe.fromJson(Map<String, dynamic> json) {
-    var strPath = FileSystemEntity.isFile(_url + json['sku'] + '.jpg') != null
-        ? _url + json['sku'] + '.jpg'
-        : _url + 'nopicture.jpg';
+    var strPath = FileSystemEntity.isFile('${_url + json['sku']}.jpg') != null
+        ? '${_url + json['sku']}.jpg'
+        : '${_url}nopicture.jpg';
 
     return NFe(
       Nfe: json['Nfe'] as String,
@@ -179,11 +186,11 @@ class NFe {
 }
 
 Future<List<Order>> fetchOrders(
-    http.Client client, String $user, String $strStore, String $picked) async {
+    http.Client client, String user, String strStore, String picked) async {
   String strparam = 'https://www.tiven.com.br/picking/listOrders.php/';
-  strparam += '?user=' + $user;
-  strparam += $strStore.length > 2 ? '&store=' + $strStore : '';
-  strparam += '&picked=' + $picked;
+  strparam += '?user=$user';
+  strparam += strStore.length > 2 ? '&store=strStore' : '';
+  strparam += '&picked=$picked';
   final response = await client.get(Uri.parse(strparam));
   print(response.body);
 // Use the compute function to run parsePhotos in a separate isolate
@@ -226,13 +233,15 @@ class Order {
 
   factory Order.fromJson(Map<String, dynamic> json) {
     String strMarketPath =
-        FileSystemEntity.isFile(_url + 'logos/' + json['market'] + '.jpg') != null
-            ? _url + 'logos/' + json['market'] + '.jpg'
-            : _url + 'nopicture.jpg';
+        FileSystemEntity.isFile('${_url + 'logos/' + json['market']}.jpg') !=
+                null
+            ? '${_url + 'logos/' + json['market']}.jpg'
+            : '${_url}nopicture.jpg';
     String strStorePath =
-        FileSystemEntity.isFile(_url + 'logos/' + json['store'] + '.jpg') != null
-            ? _url + 'logos/' + json['store'] + '.jpg'
-            : _url + 'nopicture.jpg';
+        FileSystemEntity.isFile('${_url + 'logos/' + json['store']}.jpg') !=
+                null
+            ? '${_url + 'logos/' + json['store']}.jpg'
+            : '${_url}nopicture.jpg';
 
     return Order(
       nOrder: json['nOrder'] as String,
@@ -250,13 +259,13 @@ class Order {
   }
 }
 
-Future<List<Photo>> fetchNFeItems(String $user, String $strStore) async {
+Future<List<Photo>> fetchNFeItems(String user, String strStore) async {
   http.Client client = http.Client();
   String strparam = 'https://www.tiven.com.br/picking/blingOrder.php';
   // strparam = '127.0.0.1/tiven/picking/blingOrders.php';
-  strparam += '?user=' + $user;
-  strparam += '&idSituacao=' + 'Emitida';
-  strparam += '&store=' + $strStore;
+  strparam += '?user=$user';
+  strparam += '&idSituacao=Emitida';
+  strparam += '&store=$strStore';
   final response = await client.get(Uri.parse(strparam));
   print(response.body);
   // Use the compute function to run parsePhotos in a separate isolate
@@ -264,18 +273,16 @@ Future<List<Photo>> fetchNFeItems(String $user, String $strStore) async {
 }
 
 Future<List<Photo>> fetchItems(
-  String $user, bool $blStatus, String $strStore) async {
-
+    String user, bool blStatus, String strStore) async {
   //'/pedidos/vendas?page=1;limit=100&filters=dataEmissao[2024-02-13T12:49:20.000Z TO 2024-02-14T23:59:00.000Z]; idSituacao[68912, 15,6,9]'
 
-
   http.Client client = http.Client();
-  String $strStatus = $blStatus ? '6' : '6';
+  String strStatus = blStatus ? '6' : '6';
   String strparam = 'https://www.tiven.com.br/picking/blingOrders.php';
   // strparam = '127.0.0.1/tiven/picking/blingOrders.php';
-  strparam += '?user=' + $user;
-  strparam += '&idSituacao=' + $strStatus;
-  strparam += '&store=' + $strStore;
+  strparam += '?user=$user';
+  strparam += '&idSituacao=$strStatus';
+  strparam += '&store=$strStore';
   final response = await client.get(Uri.parse(strparam));
   print(response.body);
   // Use the compute function to run parsePhotos in a separate isolate
@@ -283,32 +290,32 @@ Future<List<Photo>> fetchItems(
 }
 
 Future<List<Photo>> fetchEdItems(
-  String $user, bool $blStatus, String $strStore, String $strCourier) async {
+    String user, bool blStatus, String strStore, String strCourier) async {
   http.Client client = http.Client();
   // String $strStatus = $blStatus ? '6' : '6';
   String strparam = 'https://www.tiven.com.br/picking/siteED.php';
   //strparam = '127.0.0.1/tiven/picking/siteED.php';
-  strparam += '?user=' + $user;
+  strparam += '?user=$user';
   //strparam += '&idSituacao=' + $strStatus;
-  strparam += '&store=' + $strStore;
-  strparam += '&courier=' + $strCourier;
+  strparam += '&store=$strStore';
+  strparam += '&courier=$strCourier';
   final response = await client.get(Uri.parse(strparam));
   print(response.body);
   // Use the compute function to run parsePhotos in a separate isolate
 
-  return await fetchVwEdItems($user, $blStatus, $strStore, $strCourier);
+  return await fetchVwEdItems(user, blStatus, strStore, strCourier);
   //return compute(parsePhotos, response.body);
 }
 
 Future<List<Photo>> fetchVwEdItems(
-  String $user, bool $blStatus, String $strStore, String $strCourier) async {
+    String user, bool blStatus, String strStore, String strCourier) async {
   http.Client client = new http.Client();
   String strparam = 'https://www.tiven.com.br/picking/vwSiteED.php';
   //strparam = '127.0.0.1/tiven/picking/siteED.php';
-  strparam += '?user=' + $user;
-  strparam += '&store=' + $strStore;
-  strparam += '&courier=' + $strCourier;
-  strparam += '&r=' + DateTime.now().millisecondsSinceEpoch.toString();
+  strparam += '?user=$user';
+  strparam += '&store=$strStore';
+  strparam += '&courier=$strCourier';
+  strparam += '&r=${DateTime.now().millisecondsSinceEpoch}';
 
   final response = await client.get(Uri.parse(strparam));
   print(response.body);
@@ -352,11 +359,11 @@ class Photo {
       required this.thumbnailUrl});
 
   factory Photo.fromJson(Map<String, dynamic> json) {
-    var strPath = FileSystemEntity.isFile(_url + json['sku'] + '.jpg')
+    var strPath = FileSystemEntity.isFile('${_url + json['sku']}.jpg')
                 .timeout(Duration(milliseconds: 500)) !=
             null
-        ? _url + json['sku'] + '.jpg'
-        : _url + 'nopicture.jpg';
+        ? '${_url + json['sku']}.jpg'
+        : '${_url}nopicture.jpg';
 
     return Photo(
       box: json['box'] as String,
@@ -370,19 +377,19 @@ class Photo {
       title: json['title'] as String,
       qty: json['qty'] as String,
       address: json['address'] as String,
-      thumbnailUrl: _url + json['sku'] + '.jpg',
+      thumbnailUrl: '${_url + json['sku']}.jpg',
       // thumbnailUrl: strPath,
     );
   }
 }
 
 Future<List<InvItems>> fetchInvItems(
-    String $user, bool $blStatus, String $intInv) async {
+    String user, bool blStatus, String $intInv) async {
   http.Client client = http.Client();
   String strparam = 'https://www.tiven.com.br/crud/InventoryList.php';
   // String strparam = 'http://127.0.0.1/tiven/crud/InventoryList.php';
-  strparam += '?user=' + $user;
-  strparam += '&IdSituacao=' + $blStatus.toString();
+  strparam += '?user=$user';
+  strparam += '&IdSituacao=$blStatus';
   strparam += '&IdInv=1'; // + $intInv;
   var response = await client.get(Uri.parse(strparam));
   // Use the compute function to run parseInvItems in a separate isolate
@@ -424,11 +431,11 @@ class InvItems {
       required this.timestamp});
 
   factory InvItems.fromJson(Map<String, dynamic> json) {
-    var strPath = FileSystemEntity.isFile(_url + json['sku'] + '.jpg')
-                .timeout(Duration(milliseconds: 500)) !=
+    var strPath = FileSystemEntity.isFile('${_url + json['sku']}.jpg')
+                .timeout(const Duration(milliseconds: 500)) !=
             null
-        ? _url + json['sku'] + '.jpg'
-        : _url + 'nopicture.jpg';
+        ? '${_url + json['sku']}.jpg'
+        : '${_url}nopicture.jpg';
 
     return InvItems(
       id: json['id'] as String,
@@ -439,7 +446,7 @@ class InvItems {
       title: json['title'] as String,
       captured: '0',
       address: json['address'] as String,
-      thumbnailUrl: _url + json['sku'] + '.jpg',
+      thumbnailUrl: '${_url + json['sku']}.jpg',
       user: json['user'] as String,
       team: json['team'] as String,
       timestamp: json['timestamp'] as String,

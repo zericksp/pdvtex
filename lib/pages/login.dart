@@ -21,7 +21,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final _pseudoController = TextEditingController();
   final _passwordController = TextEditingController();
   late int idUser;
-  late String title, username, firstname, lastname, provider, picture,email;
+  late String title, username, firstname, lastname, provider, picture, email;
 
   // ignore: prefer_typing_uninitialized_variables
   var data;
@@ -90,11 +90,9 @@ class _MyHomePageState extends State<MyHomePage> {
                             icon: const Icon(Icons.exit_to_app),
                             style: ButtonStyle(
                                 backgroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                        Colors.grey),
-                                foregroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                        Colors.white))),
+                                    WidgetStateProperty.all<Color>(Colors.grey),
+                                foregroundColor: WidgetStateProperty.all<Color>(
+                                    Colors.white))),
                       ),
                     ],
                   ),
@@ -158,20 +156,28 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (data['username'] == pseudo) {
       if (data['password'] == password) {
-        List<String> logg = [data['user_id']!,data['first_name'] ?? '',data['last_name'] ?? '',data['email'] ?? '','database',data['picture'] ??'',];
+        List<String> logg = [
+          data['user_id']!,
+          data['first_name'] ?? '',
+          data['last_name'] ?? '',
+          data['email'] ?? '',
+          'database',
+          data['picture'] ?? '',
+        ];
         var route = MaterialPageRoute(
           builder: (BuildContext context) => MenuPage(
             title: '',
-            data: logg,),
-            // firstname: data['first_name']!,
-            // lastname: data['last_name']!,
-            // username: data['username']!,
-            // email: data['email']!,
-            // provider: 'database',
-            // picture: data['picture']!,
-            // ),
+            data: logg,
+          ),
+          // firstname: data['first_name']!,
+          // lastname: data['last_name']!,
+          // username: data['username']!,
+          // email: data['email']!,
+          // provider: 'database',
+          // picture: data['picture']!,
+          // ),
         );
-        
+
         saveSharedData();
 
         setState(() {
@@ -188,7 +194,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-saveSharedData() async {
+  saveSharedData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('logged', true);
     prefs.setString('userName', data['username']);
@@ -198,7 +204,7 @@ saveSharedData() async {
     prefs.setString('username', data['username']);
     prefs.setString('email', data['userEmail']);
     prefs.setString('provider', 'database');
-    prefs.setString('picture', data['picture']??'');
+    prefs.setString('picture', data['picture'] ?? '');
 
     setState(
       () {
@@ -210,18 +216,19 @@ saveSharedData() async {
   handleAfterSignIn() {
     Future.delayed(const Duration(milliseconds: 500)).then((value) {
       nextScreenReplace(
+        // ignore: use_build_context_synchronously
         context,
         MenuScreen(
-            title: '',
-            data: data,
-            // idUser: int.parse(data['user_id']),
-            // username: data['username'] ?? '',
-            // firstname: data['first_name'] ?? '',
-            // lastname: data['last_name'] ?? '',
-            // provider: 'database',
-            // picture: data['picture'] ?? '',
-            // email: data['userEmail'] ?? ''
-            ),
+          title: '',
+          data: data,
+          // idUser: int.parse(data['user_id']),
+          // username: data['username'] ?? '',
+          // firstname: data['first_name'] ?? '',
+          // lastname: data['last_name'] ?? '',
+          // provider: 'database',
+          // picture: data['picture'] ?? '',
+          // email: data['userEmail'] ?? ''
+        ),
       );
     });
   }
@@ -275,7 +282,7 @@ saveSharedData() async {
     /******************* LOGO **********************************/
   }
 
-/// ******************** Advert *********************************
+  /// ******************** Advert *********************************
   Row advert() {
     return Row(
       children: [
@@ -308,7 +315,7 @@ saveSharedData() async {
   }
 /***************************************************************/
 
-/// **************** TextField logo******************************
+  /// **************** TextField logo******************************
   Center logo() {
     return Center(
       child: Stack(
@@ -327,7 +334,8 @@ saveSharedData() async {
               border: Border.all(
                 style: BorderStyle.solid,
                 strokeAlign: BorderSide.strokeAlignInside,
-                color: const Color.fromARGB(255, 107, 128, 141).withOpacity(0.9),
+                color:
+                    const Color.fromARGB(255, 107, 128, 141).withOpacity(0.9),
                 width: 1,
               ),
               shape: BoxShape.rectangle,
@@ -342,7 +350,7 @@ saveSharedData() async {
   }
 /***************************************************************/
 
-/// **************** TextField Pseudo****************************
+  /// **************** TextField Pseudo****************************
   Container pseudo() {
     return Container(
       width: MediaQuery.of(context).size.width * 0.8,
@@ -401,9 +409,9 @@ saveSharedData() async {
           ),
         ),
         controller: _pseudoController,
-        onChanged: (value){
+        onChanged: (value) {
           setState(() {
-          _enabledPwd = (value.toString().length > 4);            
+            _enabledPwd = (value.toString().length > 4);
           });
         },
       ),
@@ -412,7 +420,7 @@ saveSharedData() async {
 
 /***************************************************************/
 
-/// ****************** TextField Password ***********************
+  /// ****************** TextField Password ***********************
   Container password() {
     return Container(
       width: MediaQuery.of(context).size.width * 0.8,
@@ -486,13 +494,13 @@ saveSharedData() async {
         ),
         obscureText: _isSecured,
         controller: _passwordController,
-        onChanged: (value)=> _enabledSend = value.toString().length > 4,
+        onChanged: (value) => _enabledSend = value.toString().length > 4,
       ),
     );
   }
 /***************************************************************/
 
-/// ******************Button Cancel *****************************
+  /// ******************Button Cancel *****************************
   ElevatedButton cancelButton() {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
@@ -513,7 +521,7 @@ saveSharedData() async {
         maxLines: 1,
       ),
       //Text('Cancelar'),
-      onPressed: () async { 
+      onPressed: () async {
         _passwordController.clear();
         _pseudoController.clear();
         // Perform some action
@@ -526,7 +534,7 @@ saveSharedData() async {
   }
 /***************************************************************/
 
-/// ******************* Button Login*****************************
+  /// ******************* Button Login*****************************
   ElevatedButton loginButton() {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
@@ -547,34 +555,34 @@ saveSharedData() async {
         maxLines: 1,
       ),
       onPressed: () async {
-            if(_enabledSend == false){
-              null;
+        if (_enabledSend == false) {
+          null;
+        } else {
+          await (String pseudo) async {
+            var response = await http.get(
+                Uri.parse(
+                    "http://www.tiven.com.br/crud/Login.php?PSEUDO=$pseudo"),
+                headers: {"Accept": "application/json"});
+
+            if (response.contentLength! > 100) {
+              print(response.body);
             }
-            else{
-              await (String pseudo) async {
-          var response = await http.get(
-              Uri.parse(
-                  "http://www.tiven.com.br/crud/Login.php?PSEUDO=$pseudo"),
-              headers: {"Accept": "application/json"});
 
-          if (response.contentLength! > 100) {
-            print(response.body);
-          }
+            setState(() {
+              var convertDataToJson = json.decode(response.body);
+              data = convertDataToJson['result'];
+              data = data[0];
+            });
+          }(_pseudoController.text);
 
-          setState(() {
-            var convertDataToJson = json.decode(response.body);
-            data = convertDataToJson['result'];
-            data = data[0];
-          });
-        }(_pseudoController.text);
-
-        await VerifData(_pseudoController.text, _passwordController.text, data);
-        // Perform some action
-        const SnackBar(
-          content: Text("Login de usuário"),
-          backgroundColor: Colors.deepOrange,
-        );
-            }
+          await VerifData(
+              _pseudoController.text, _passwordController.text, data);
+          // Perform some action
+          const SnackBar(
+            content: Text("Login de usuário"),
+            backgroundColor: Colors.deepOrange,
+          );
+        }
       },
     );
   }
